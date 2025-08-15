@@ -1,36 +1,106 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Dead Man's Switch Frontend
+
+A modern Next.js React application that implements a dead man's switch system. Users can create messages that will be automatically sent if they don't check in within a specified time period.
+
+## Features
+
+- **Message Creation**: Create custom messages to be sent if you don't check in
+- **Configurable Timers**: Set check-in intervals from 1 hour to 1 week
+- **Real-time Status**: Visual indicators showing active, expired, and inactive switches
+- **Automatic Expiration**: Switches automatically expire when the deadline is missed
+- **Local Storage**: All data is persisted locally in the browser
+- **Responsive Design**: Works seamlessly on desktop and mobile devices
+- **Dark Mode Support**: Built-in dark/light theme support
+
+## How It Works
+
+1. **Create a Switch**: Enter your message and set how often you need to check in
+2. **Stay Active**: Click "Check In" before your deadline to extend the timer
+3. **Automatic Action**: If you miss a check-in, the switch expires and can trigger your predefined action
+
+## Use Cases
+
+- **Emergency Contacts**: Ensure loved ones are notified if something happens to you
+- **Business Continuity**: Automate important business communications
+- **Digital Estate Planning**: Share passwords or important information posthumously
+- **Safety Monitoring**: Regular check-ins for solo travelers or remote workers
+
+## Technology Stack
+
+- **Frontend**: Next.js 14 with React 18
+- **Styling**: Tailwind CSS with responsive design
+- **Icons**: Lucide React for clean, consistent iconography
+- **TypeScript**: Full type safety and better development experience
+- **Local Storage**: Browser-based data persistence
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+ 
+- npm or yarn
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone <your-repo-url>
+   cd dead-mans-switch
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
+
+4. Open [http://localhost:3000](http://localhost:3000) in your browser
+
+### Building for Production
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run build
+npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Project Structure
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+src/
+├── app/
+│   ├── layout.tsx      # Root layout with metadata
+│   ├── page.tsx        # Main dead man's switch interface
+│   └── globals.css     # Global styles and Tailwind imports
+├── components/         # Reusable React components (future)
+└── types/             # TypeScript type definitions (future)
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Future Enhancements
 
-## Learn More
+- [ ] Email/SMS integration for actual message delivery
+- [ ] Multiple recipient support
+- [ ] Message templates
+- [ ] Advanced scheduling options
+- [ ] User authentication and cloud sync
+- [ ] API endpoints for external integrations
+- [ ] Mobile app version
 
-To learn more about Next.js, take a look at the following resources:
+## Contributing
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## License
 
-## Deploy on Vercel
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Disclaimer
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This application is for educational and personal use. The developers are not responsible for any consequences resulting from the use of this software. Always ensure you have proper legal and ethical considerations when implementing automated messaging systems.
