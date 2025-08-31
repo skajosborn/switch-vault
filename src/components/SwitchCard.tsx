@@ -1,6 +1,6 @@
 'use client';
 
-import { Clock, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
+import { Clock, AlertTriangle, CheckCircle, XCircle, Bell, Zap, Shield, Users } from 'lucide-react';
 import { DeadMansSwitch } from '@/types';
 import { getTimeRemaining, getStatusColor, formatDateTime } from '@/utils/dateUtils';
 
@@ -55,17 +55,27 @@ export default function SwitchCard({ switch_, onCheckIn, onDelete }: SwitchCardP
     return 'text-blue-400';
   };
 
+  const getNotificationCount = () => {
+    if (!switch_.notifications) return 0;
+    return Object.values(switch_.notifications).filter(Boolean).length;
+  };
+
   return (
     <div style={switchCardStyle} className={`border-l-4 ${getBorderColor()}`}>
       {/* Header Section */}
-              <div className="flex items-start justify-between mb-6">
+      <div className="flex items-start justify-between mb-6">
         <div className="flex-1">
-          {/* Status Badge */}
+          {/* Status Badge and Plan Name */}
           <div className="flex items-center gap-3 mb-4">
             {getStatusIcon()}
             <span className={`font-semibold text-lg px-3 py-1 rounded-full bg-slate-700/50 border border-slate-600/30 ${getStatusColorClass(switch_)}`}>
               {getStatusText()}
             </span>
+            {switch_.planName && (
+              <span className="text-slate-300 text-sm px-3 py-1 rounded-full bg-slate-700/30 border border-slate-600/20">
+                {switch_.planName}
+              </span>
+            )}
           </div>
           
           {/* Message */}
@@ -81,7 +91,7 @@ export default function SwitchCard({ switch_, onCheckIn, onDelete }: SwitchCardP
           </div>
           
           {/* Info Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-blue-600/20 rounded-lg border border-blue-600/30">
                 <Clock className="w-4 h-4 text-blue-400" />
@@ -90,6 +100,13 @@ export default function SwitchCard({ switch_, onCheckIn, onDelete }: SwitchCardP
                 <span style={{ color: '#bfdbfe', fontSize: '0.875rem', fontWeight: '500' }}>
                   Check-in every {switch_.checkInInterval}h
                 </span>
+                {switch_.gracePeriod && (
+                  <div>
+                    <span style={{ color: '#94a3b8', fontSize: '0.75rem' }}>
+                      +{switch_.gracePeriod}h grace period
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
             
@@ -117,6 +134,79 @@ export default function SwitchCard({ switch_, onCheckIn, onDelete }: SwitchCardP
               </span>
             </div>
           </div>
+
+          {/* Customization Features */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            {/* Reminders */}
+            {switch_.reminders && (
+              <div className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-lg border border-slate-600/20">
+                <div className="p-2 bg-yellow-600/20 rounded-lg border border-yellow-600/30">
+                  <Bell className="w-4 h-4 text-yellow-400" />
+                </div>
+                <div>
+                  <span style={{ color: '#bfdbfe', fontSize: '0.875rem', fontWeight: '500' }}>
+                    Reminders: {switch_.reminders.enabled ? 'ON' : 'OFF'}
+                  </span>
+                  {switch_.reminders.enabled && (
+                    <div>
+                      <span style={{ color: '#94a3b8', fontSize: '0.75rem' }}>
+                        {switch_.reminders.frequency} • {switch_.reminders.advanceWarning}h warning
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Notifications */}
+            {switch_.notifications && (
+              <div className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-lg border border-slate-600/20">
+                <div className="p-2 bg-green-600/20 rounded-lg border border-green-600/30">
+                  <Zap className="w-4 h-4 text-green-400" />
+                </div>
+                <div>
+                  <span style={{ color: '#bfdbfe', fontSize: '0.875rem', fontWeight: '500' }}>
+                    Notifications: {getNotificationCount()} channels
+                  </span>
+                  <br />
+                  <span style={{ color: '#94a3b8', fontSize: '0.75rem' }}>
+                    {switch_.autoRenewal ? 'Auto-renewal ON' : 'Auto-renewal OFF'}
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Emergency Contacts and Custom Actions */}
+          {(switch_.emergencyContacts?.length > 0 || switch_.customActions?.length > 0) && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              {switch_.emergencyContacts && switch_.emergencyContacts.length > 0 && (
+                <div className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-lg border border-slate-600/20">
+                  <div className="p-2 bg-red-600/20 rounded-lg border border-red-600/30">
+                    <Users className="w-4 h-4 text-red-400" />
+                  </div>
+                  <div>
+                    <span style={{ color: '#bfdbfe', fontSize: '0.875rem', fontWeight: '500' }}>
+                      Emergency Contacts: {switch_.emergencyContacts.length}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {switch_.customActions && switch_.customActions.length > 0 && (
+                <div className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-lg border border-slate-600/20">
+                  <div className="p-2 bg-orange-600/20 rounded-lg border border-orange-600/30">
+                    <Shield className="w-4 h-4 text-orange-400" />
+                  </div>
+                  <div>
+                    <span style={{ color: '#bfdbfe', fontSize: '0.875rem', fontWeight: '500' }}>
+                      Custom Actions: {switch_.customActions.length}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
       

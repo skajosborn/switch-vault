@@ -1,48 +1,21 @@
 'use client';
 
-import { useState } from 'react';
-import { CreateSwitchFormData } from '@/types';
-import CreateSwitchForm from '@/components/CreateSwitchForm';
 import SwitchCard from '@/components/SwitchCard';
 import EmptyState from '@/components/EmptyState';
 import FeaturesSection from '@/components/FeaturesSection';
 import { useDeadMansSwitches } from '@/hooks/useDeadMansSwitches';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
-  const [isCreating, setIsCreating] = useState(false);
-  const { switches, activeSwitches, createSwitch, checkIn, deleteSwitch } = useDeadMansSwitches();
+  const router = useRouter();
+  const { switches, activeSwitches, checkIn, deleteSwitch } = useDeadMansSwitches();
 
-  const handleCreateSwitch = (data: CreateSwitchFormData) => {
-    createSwitch(data.message, data.checkInInterval);
-    setIsCreating(false);
-  };
-
-  // Polished card styles with !important to override any conflicts
-  const heroCardStyle = {
-    backgroundColor: '#1e40af !important',
-    border: '2px solid #3b82f6 !important',
-    borderRadius: '1rem !important',
-    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.4) !important',
-    transition: 'all 0.3s ease !important',
-    padding: '2.5rem !important',
-    margin: '2rem 0 !important'
-  };
-
-  const gradientButtonStyle = {
-    background: 'linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%) !important',
-    color: 'white !important',
-    fontWeight: '600 !important',
-    transition: 'all 0.3s ease !important',
-    transform: 'scale(1) !important',
-    boxShadow: '0 10px 25px -5px rgba(59, 130, 246, 0.4) !important',
-    border: 'none !important',
-    padding: '1rem 2rem !important',
-    borderRadius: '0.75rem !important',
-    fontSize: '1.125rem !important'
+  const handleCreateSwitch = () => {
+    router.push('/setup');
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900">
       {/* Hero Section */}
       <section className="py-24 px-4">
         <div className="max-w-6xl mx-auto text-center">
@@ -54,8 +27,21 @@ export default function Home() {
             lineHeight: '1.1',
             textShadow: '0 4px 8px rgba(0, 0, 0, 0.3)'
           }}>
-            Your Safety Net for When You're Not There
+            Final Switch
           </h1>
+          <div className="flex justify-center pb-16 p-6">
+              <img 
+                src="/sandtimer.png" 
+                alt="Safety Net Dashboard Preview" 
+                className="rounded-lg shadow-2xl border border-blue-500/20"
+                style={{
+                  maxWidth: '600px',
+                  height: 'auto',
+                  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/20 to-transparent rounded-lg"></div>
+            </div>
           <p style={{ 
             color: '#dbeafe', 
             fontSize: '1.5rem', 
@@ -64,34 +50,43 @@ export default function Home() {
             lineHeight: '1.6',
             textShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
           }}>
-            Create messages that will be sent automatically if you don't check in within a specified time period. 
-            Trust in our secure system to protect what matters most.
+            “Peace of mind, automated. Life is unpredictable, but your plans don’t have to be. Our customizable Dead Man’s Switch puts you in control — set your own check-in schedule, choose alerts and reminders, and decide exactly what happens if you don’t respond. Whether it’s protecting important files, sending final messages, or transferring digital assets, we ensure your wishes are carried out—securely, automatically, and on your terms.”
           </p>
           
           {/* CTA Button Container */}
-          <div style={heroCardStyle} className="max-w-lg mx-auto">
+          <div className="max-w-lg mx-auto bg-blue-600 border-2 border-blue-500 rounded-2xl shadow-2xl p-6 md:p-10 m-4 md:m-8">
             <button
-              onClick={() => setIsCreating(true)}
-              style={gradientButtonStyle}
-              className="w-full hover:scale-105 active:scale-95"
+              onClick={handleCreateSwitch}
+              className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold py-3 md:py-4 px-6 md:px-8 rounded-xl hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg text-base md:text-lg cursor-pointer border-2 border-transparent hover:border-white focus:outline-none focus:ring-4 focus:ring-blue-300"
+              style={{ position: 'relative', zIndex: 10 }}
             >
               Set Up Your Switch
             </button>
+          </div>
+          
+
+          
+          {/* Hero Image */}
+          <div className="mt-12 flex justify-center">
+            {/* <div className="relative bg-slate-900/50 backdrop-blur-sm border border-blue-600/30 rounded-xl shadow-2xl p-6">
+              <img 
+                src="/sandtimer.png" 
+                alt="Safety Net Dashboard Preview" 
+                className="rounded-lg shadow-2xl border border-blue-500/20"
+                style={{
+                  maxWidth: '600px',
+                  height: 'auto',
+                  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/20 to-transparent rounded-lg"></div>
+            </div> */}
           </div>
         </div>
       </section>
 
       {/* Create Switch Form Section */}
-      {isCreating && (
-        <section className="px-4 pb-20">
-          <div className="max-w-4xl mx-auto">
-            <CreateSwitchForm
-              onSubmit={handleCreateSwitch}
-              onCancel={() => setIsCreating(false)}
-            />
-          </div>
-        </section>
-      )}
+      {/* Removed as per edit hint */}
 
       {/* Features Section */}
       <section className="py-20 px-4" style={{ 

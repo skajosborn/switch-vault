@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { DeadMansSwitch } from '@/types';
+import { DeadMansSwitch, CreateSwitchFormData } from '@/types';
 import { addHours } from '@/utils/dateUtils';
 
 const STORAGE_KEY = 'deadMansSwitches';
@@ -13,11 +13,33 @@ export function useDeadMansSwitches() {
     if (savedSwitches) {
       try {
         const parsed = JSON.parse(savedSwitches);
-        // Convert string dates back to Date objects
+        // Convert string dates back to Date objects and handle legacy data
         const switchesWithDates = parsed.map((sw: any) => ({
-          ...sw,
+          id: sw.id,
+          message: sw.message,
+          checkInInterval: sw.checkInInterval,
           lastCheckIn: sw.lastCheckIn ? new Date(sw.lastCheckIn) : null,
+          isActive: sw.isActive,
           expiresAt: sw.expiresAt ? new Date(sw.expiresAt) : null,
+          // Handle new fields with defaults for legacy data
+          planName: sw.planName || 'My Safety Switch',
+          gracePeriod: sw.gracePeriod || 12,
+          reminders: sw.reminders || {
+            enabled: true,
+            frequency: 'daily',
+            advanceWarning: 24,
+            customMessage: ''
+          },
+          notifications: sw.notifications || {
+            email: true,
+            sms: false,
+            push: true,
+            slack: false,
+            discord: false
+          },
+          autoRenewal: sw.autoRenewal !== undefined ? sw.autoRenewal : true,
+          emergencyContacts: sw.emergencyContacts || [],
+          customActions: sw.customActions || []
         }));
         setSwitches(switchesWithDates);
       } catch (error) {
@@ -49,14 +71,21 @@ export function useDeadMansSwitches() {
     return () => clearInterval(interval);
   }, []);
 
-  const createSwitch = (message: string, checkInInterval: number) => {
+  const createSwitch = (formData: CreateSwitchFormData) => {
     const newSwitch: DeadMansSwitch = {
       id: Date.now().toString(),
-      message: message.trim(),
-      checkInInterval,
+      message: formData.message.trim(),
+      checkInInterval: formData.checkInInterval,
       lastCheckIn: new Date(),
       isActive: true,
-      expiresAt: addHours(new Date(), checkInInterval),
+      expiresAt: addHours(new Date(), formData.checkInInterval + formData.gracePeriod),
+      planName: formData.planName,
+      gracePeriod: formData.gracePeriod,
+      reminders: formData.reminders,
+      notifications: formData.notifications,
+      autoRenewal: formData.autoRenewal,
+      emergencyContacts: formData.emergencyContacts,
+      customActions: formData.customActions
     };
 
     setSwitches(prev => [...prev, newSwitch]);
@@ -66,10 +95,11 @@ export function useDeadMansSwitches() {
   const checkIn = (id: string) => {
     setSwitches(prev => prev.map(sw => {
       if (sw.id === id) {
+        const newExpiry = addHours(new Date(), sw.checkInInterval + sw.gracePeriod);
         return {
           ...sw,
           lastCheckIn: new Date(),
-          expiresAt: addHours(new Date(), sw.checkInInterval),
+          expiresAt: newExpiry,
         };
       }
       return sw;
@@ -78,6 +108,20 @@ export function useDeadMansSwitches() {
 
   const deleteSwitch = (id: string) => {
     setSwitches(prev => prev.filter(sw => sw.id !== id));
+  };
+
+  const updateSwitch = (id: string, updates: Partial<DeadMansSwitch>) => {
+    setSwitches(prev => prev.map(sw => {
+      if (sw.id === id) {
+        const updated = { ...sw, ...updates };
+        // Recalculate expiry if check-in interval or grace period changed
+        if (updates.checkInInterval || updates.gracePeriod) {
+          updated.expiresAt = addHours(new Date(), updated.checkInInterval + updated.gracePeriod);
+        }
+        return updated;
+      }
+      return sw;
+    }));
   };
 
   const getActiveSwitches = () => switches.filter(s => s.isActive);
@@ -90,5 +134,6 @@ export function useDeadMansSwitches() {
     createSwitch,
     checkIn,
     deleteSwitch,
+    updateSwitch,
   };
 }
