@@ -60,7 +60,7 @@ If you prefer to use MongoDB Atlas (cloud):
 
 Example Atlas connection string:
 ```
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/dead-mans-switch?retryWrites=true&w=majority
+MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/<database>?retryWrites=true&w=majority
 ```
 
 ### 4. Install Dependencies
