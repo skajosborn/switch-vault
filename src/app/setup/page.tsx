@@ -1,10 +1,37 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import { ArrowLeft, Mail, Wallet, FileText, Settings, Shield, Clock, Users } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function SetupPage() {
   const router = useRouter();
+  const { user, token, loading } = useAuth();
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!loading && !token) {
+      router.push('/auth/login');
+    }
+  }, [token, loading, router]);
+
+  // Show loading state while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-slate-400">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render anything if not authenticated (will redirect)
+  if (!token) {
+    return null;
+  }
 
   const switchTypes = [
     {
@@ -98,73 +125,48 @@ export default function SetupPage() {
         <div className="max-w-6xl mx-auto">
           {/* Page Description */}
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-white mb-4">
-              What type of switch do you want to set up?
-            </h2>
-            <p className="text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
-              Select the type of dead man's switch that best fits your needs. 
-              Each type offers different features and customization options.
+            <h2 className="text-3xl font-bold text-white mb-4">What type of switch would you like to create?</h2>
+            <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+              Choose the type of dead man's switch that best fits your needs. You can create multiple switches of different types.
             </p>
           </div>
 
-          {/* Cards Grid */}
+          {/* Switch Type Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {switchTypes.map((type) => {
-              const IconComponent = type.icon;
+            {switchTypes.map((switchType) => {
+              const IconComponent = switchType.icon;
               return (
                 <div
-                  key={type.id}
-                  onClick={() => handleCardClick(type.route)}
-                  className="group cursor-pointer"
+                  key={switchType.id}
+                  onClick={() => handleCardClick(switchType.route)}
+                  className="bg-slate-800/50 border border-slate-700 rounded-xl p-6 cursor-pointer hover:bg-slate-700/50 transition-all duration-300 hover:scale-105 group"
                 >
-                  <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 hover:bg-slate-800/70 hover:border-slate-600/50 transition-all duration-300 hover:scale-105 hover:shadow-2xl">
-                    {/* Icon */}
-                    <div className={`w-16 h-16 rounded-xl bg-gradient-to-r ${type.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                      <IconComponent className="w-8 h-8 text-white" />
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className={`p-3 rounded-lg bg-gradient-to-r ${switchType.color}`}>
+                      <IconComponent className="w-6 h-6 text-white" />
                     </div>
-
-                    {/* Content */}
-                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-300 transition-colors">
-                      {type.title}
-                    </h3>
-                    <p className="text-slate-300 mb-4 leading-relaxed">
-                      {type.description}
-                    </p>
-
-                    {/* Features */}
-                    <ul className="space-y-2">
-                      {type.features.map((feature, index) => (
-                        <li key={index} className="flex items-center gap-2 text-sm text-slate-400">
-                          <div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-
-                    {/* Action */}
-                    <div className="mt-6 pt-4 border-t border-slate-700/30">
-                      <div className={`inline-flex items-center gap-2 text-sm font-medium bg-gradient-to-r ${type.color} bg-clip-text text-transparent group-hover:scale-105 transition-transform duration-300`}>
-                        Set up {type.title}
-                        <ArrowLeft className="w-4 h-4 rotate-180" />
+                    <h3 className="text-xl font-semibold text-white">{switchType.title}</h3>
+                  </div>
+                  
+                  <p className="text-slate-400 mb-4">{switchType.description}</p>
+                  
+                  <div className="space-y-2">
+                    {switchType.features.map((feature, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
+                        <span className="text-sm text-slate-300">{feature}</span>
                       </div>
-                    </div>
+                    ))}
+                  </div>
+                  
+                  <div className="mt-6 pt-4 border-t border-slate-700">
+                    <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition-colors">
+                      Choose {switchType.title}
+                    </button>
                   </div>
                 </div>
               );
             })}
-          </div>
-
-          {/* Bottom CTA */}
-          <div className="text-center mt-12">
-            <p className="text-slate-400 mb-4">
-              Not sure which type to choose?
-            </p>
-            <button
-              onClick={() => router.push('/create-switch')}
-              className="bg-slate-700 hover:bg-slate-600 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-300 border border-slate-600/30"
-            >
-              Start with Basic Setup
-            </button>
           </div>
         </div>
       </div>

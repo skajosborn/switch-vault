@@ -9,13 +9,23 @@ import { useAuth } from '@/contexts/AuthContext';
 
 export default function Home() {
   const router = useRouter();
-  const { user, token } = useAuth();
+  const { user, token, loading } = useAuth();
   const { switches, activeSwitches, checkIn, deleteSwitch } = useDeadMansSwitches();
 
   const handleCreateSwitch = () => {
+    // Add some debugging
+    console.log('Create switch clicked. Token:', token, 'Loading:', loading, 'User:', user);
+    
+    if (loading) {
+      console.log('Still loading, waiting...');
+      return; // Don't do anything while loading
+    }
+    
     if (token) {
+      console.log('User is authenticated, redirecting to setup');
       router.push('/setup');
     } else {
+      console.log('User is not authenticated, redirecting to login');
       router.push('/auth/login');
     }
   };
@@ -56,17 +66,18 @@ export default function Home() {
             lineHeight: '1.6',
             textShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
           }}>
-            “Peace of mind, automated. Life is unpredictable, but your plans don’t have to be. Our customizable Dead Man’s Switch puts you in control — set your own check-in schedule, choose alerts and reminders, and decide exactly what happens if you don’t respond. Whether it’s protecting important files, sending final messages, or transferring digital assets, we ensure your wishes are carried out—securely, automatically, and on your terms.”
+            "Peace of mind, automated. Life is unpredictable, but your plans don't have to be. Our customizable Dead Man's Switch puts you in control — set your own check-in schedule, choose alerts and reminders, and decide exactly what happens if you don't respond. Whether it's protecting important files, sending final messages, or transferring digital assets, we ensure your wishes are carried out—securely, automatically, and on your terms."
           </p>
           
           {/* CTA Button Container */}
           <div className="max-w-lg mx-auto bg-blue-600 border-2 border-blue-500 rounded-2xl shadow-2xl p-6 md:p-10 m-4 md:m-8">
             <button
               onClick={handleCreateSwitch}
-              className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold py-3 md:py-4 px-6 md:px-8 rounded-xl hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg text-base md:text-lg cursor-pointer border-2 border-transparent hover:border-white focus:outline-none focus:ring-4 focus:ring-blue-300"
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold py-3 md:py-4 px-6 md:px-8 rounded-xl hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg text-base md:text-lg cursor-pointer border-2 border-transparent hover:border-white focus:outline-none focus:ring-4 focus:ring-blue-300 disabled:opacity-50 disabled:cursor-not-allowed"
               style={{ position: 'relative', zIndex: 10 }}
             >
-              Set Up Your Switch
+              {loading ? 'Loading...' : 'Set Up Your Switch'}
             </button>
           </div>
           

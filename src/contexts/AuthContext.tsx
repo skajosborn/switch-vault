@@ -28,20 +28,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     // Check for existing token on app load
-    const savedToken = localStorage.getItem('auth-token');
-    const savedUser = localStorage.getItem('auth-user');
-    
-    if (savedToken && savedUser) {
+    const initializeAuth = () => {
       try {
-        setToken(savedToken);
-        setUser(JSON.parse(savedUser));
+        const savedToken = localStorage.getItem('auth-token');
+        const savedUser = localStorage.getItem('auth-user');
+        
+        if (savedToken && savedUser) {
+          const parsedUser = JSON.parse(savedUser);
+          setToken(savedToken);
+          setUser(parsedUser);
+          console.log('Auth initialized from localStorage:', { token: savedToken, user: parsedUser });
+        } else {
+          console.log('No saved auth data found');
+        }
       } catch (error) {
         console.error('Error parsing saved user data:', error);
         localStorage.removeItem('auth-token');
         localStorage.removeItem('auth-user');
+      } finally {
+        setLoading(false);
       }
-    }
-    setLoading(false);
+    };
+
+    // Add a small delay to ensure localStorage is available
+    setTimeout(initializeAuth, 100);
   }, []);
 
   const login = async (email: string, password: string) => {
@@ -64,6 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setToken(data.token);
       localStorage.setItem('auth-token', data.token);
       localStorage.setItem('auth-user', JSON.stringify(data.user));
+      console.log('Login successful:', data.user);
 
       return { success: true };
     } catch (error) {
@@ -92,6 +103,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setToken(data.token);
       localStorage.setItem('auth-token', data.token);
       localStorage.setItem('auth-user', JSON.stringify(data.user));
+      console.log('Registration successful:', data.user);
 
       return { success: true };
     } catch (error) {
@@ -101,6 +113,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = () => {
+    console.log('Logging out user');
     setUser(null);
     setToken(null);
     localStorage.removeItem('auth-token');
