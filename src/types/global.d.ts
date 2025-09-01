@@ -9,6 +9,11 @@ declare global {
       chainId?: string;
     };
   }
+
+  var mongoose: {
+    conn: any;
+    promise: any;
+  } | undefined;
 }
 
 export {};

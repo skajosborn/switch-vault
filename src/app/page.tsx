@@ -5,13 +5,19 @@ import EmptyState from '@/components/EmptyState';
 import FeaturesSection from '@/components/FeaturesSection';
 import { useDeadMansSwitches } from '@/hooks/useDeadMansSwitches';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Home() {
   const router = useRouter();
+  const { user, token } = useAuth();
   const { switches, activeSwitches, checkIn, deleteSwitch } = useDeadMansSwitches();
 
   const handleCreateSwitch = () => {
-    router.push('/setup');
+    if (token) {
+      router.push('/setup');
+    } else {
+      router.push('/auth/login');
+    }
   };
 
   return (

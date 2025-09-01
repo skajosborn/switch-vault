@@ -10,9 +10,16 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "bcryptjs": "^3.0.2",
     "ethers": "^5.7.2",
+    "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.263.1",
+    "mongodb": "^6.19.0",
+    "mongoose": "^8.18.0",
     "next": "14.0.4",
+    "next-auth": "^4.24.11",
     "react": "^18",
     "react-dom": "^18"
   },

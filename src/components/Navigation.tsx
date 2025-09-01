@@ -1,10 +1,12 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Shield, Plus, Home, Settings } from "lucide-react";
+import { Shield, Plus, Home, Settings, LogIn, UserPlus, LogOut, User } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Navigation() {
   const pathname = usePathname();
+  const { user, logout } = useAuth();
 
   const navItems = [
     { href: "/", label: "Home", icon: Home },
@@ -45,6 +47,40 @@ export default function Navigation() {
                 </Link>
               );
             })}
+            
+            {/* Auth Links */}
+            {user ? (
+              <div className="flex items-center gap-2 ml-4 pl-4 border-l border-gray-200">
+                <div className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600">
+                  <User className="w-4 h-4" />
+                  <span className="hidden lg:inline">{user.name}</span>
+                </div>
+                <button
+                  onClick={logout}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span className="hidden lg:inline">Logout</span>
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 ml-4 pl-4 border-l border-gray-200">
+                <Link
+                  href="/auth/login"
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+                >
+                  <LogIn className="w-4 h-4" />
+                  <span className="hidden lg:inline">Login</span>
+                </Link>
+                <Link
+                  href="/auth/register"
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 transition-colors rounded-lg"
+                >
+                  <UserPlus className="w-4 h-4" />
+                  <span className="hidden lg:inline">Sign Up</span>
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
